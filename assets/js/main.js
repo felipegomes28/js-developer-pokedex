@@ -23,7 +23,7 @@ function loadPokemonItens(offset, limit) {
                     <img src="${pokemon.photo}"
                         alt="${pokemon.name}">
                 </div>
-                <button class="knowMoreButton" type="button">Know More!</button>
+                <button id="${pokemon.number}" class="knowMoreButton" type="button">Know More!</button>
             </li>
             `).join('')
         pokemonList.innerHTML += newHtml
@@ -48,12 +48,22 @@ loadMoreButton.addEventListener('click', () => {
 
 pokemonList.addEventListener('click', (event) => {
     if (event.target.classList.contains('knowMoreButton')) {
-        console.log("botão clicado");
-    }
-});
+        event.preventDefault()
 
-btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        console.log('clicado');
-    })
+        fetch('popup.html')
+            .then(response => response.text())
+            .then(html => {
+                const popupWindow = window.open('', '_blank', 'width=600,height=400');
+                
+                if (popupWindow) {
+                    // Escreve o conteúdo HTML na nova janela pop-up
+                    popupWindow.document.write(html);
+                } else {
+                    alert('Pop-up bloqueado! Por favor, habilite pop-ups para ver mais informações.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar o conteúdo do arquivo HTML:', error);
+            });
+    }
 });
