@@ -13,6 +13,15 @@ function convertPokeApiDetailToPokemon(pokeDetail) {
 
     pokemon.photo = pokeDetail.sprites.other.dream_world.front_default
 
+    const stats = pokeDetail.stats.map((statInfo) => {
+        return {
+            name: statInfo.stat.name,
+            base_stat: statInfo.base_stat
+        };
+    });
+
+    pokemon.stats = stats;
+
     return pokemon
 }
 
@@ -20,6 +29,10 @@ pokeApi.getPokemonDetail = (pokemon) => {
     return fetch(pokemon.url)
         .then((response) => response.json())
         .then(convertPokeApiDetailToPokemon)
+        .catch(error => {
+            console.error('Erro ao obter detalhes do Pokémon:', error);
+            throw error; // Re-throw the error to be caught later
+        });
 }
 
 pokeApi.getPokemons = (offset = 0, limit = 5) => {

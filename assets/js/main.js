@@ -48,22 +48,46 @@ loadMoreButton.addEventListener('click', () => {
 
 pokemonList.addEventListener('click', (event) => {
     if (event.target.classList.contains('knowMoreButton')) {
-        event.preventDefault()
+        event.preventDefault();
 
-        fetch('popup.html')
-            .then(response => response.text())
-            .then(html => {
-                const popupWindow = window.open('', '_blank', 'width=600,height=400');
-                
+        // Encontra o elemento pai do botão
+        const listItem = event.target.closest('.pokemon');
+
+        // Coleta os dados do Pokémon clicado
+        const pokemonNumber = listItem.querySelector('.number').textContent.replace('#', '');
+        const pokemonName = listItem.querySelector('.name').textContent;
+        const pokemonPhoto = listItem.querySelector('.detail img').getAttribute('src');
+
+        // Chama a função para obter os detalhes do Pokémon clicado
+        pokeApi.getPokemonDetail({ url: `https://pokeapi.co/api/v2/pokemon/${pokemonNumber.toLowerCase()}` })
+            .then(pokemonDetail => {
+
+                // Coleta as estatísticas do Pokémon clicado
+                const pokemonStats = pokemonDetail.stats;
+
+                // Cria um HTML dinâmico para exibir informações adicionais sobre o Pokémon clicado
+                const popupHTML = `
+                    <h2>${pokemonName} #${pokemonNumber}</h2>
+                    <img src="${pokemonPhoto}" alt="${pokemonName}">
+                    <h3></h3>
+                    <h3>Stats:</h3>
+                    <ul>
+                        ${pokemonStats.map(stat => `<li>${stat.name}: ${stat.base_stat}</li>`).join('')}  
+                    </ul>
+                `;
+
+                // Abre uma nova janela em sobreposição
+                const popupWindow = window.open('popup.html', '_blank', 'width=367,height=647');
+
                 if (popupWindow) {
-                    // Escreve o conteúdo HTML na nova janela pop-up
-                    popupWindow.document.write(html);
+                    // Passa o conteúdo HTML gerado dinamicamente para a janela pop-up
+                    popupWindow.document.write(popupHTML);
                 } else {
                     alert('Pop-up bloqueado! Por favor, habilite pop-ups para ver mais informações.');
                 }
             })
             .catch(error => {
-                console.error('Erro ao carregar o conteúdo do arquivo HTML:', error);
+                console.error('Erro ao obter detalhes do Pokémon:', error);
             });
     }
 });
