@@ -1,5 +1,6 @@
 const pokemonList = document.getElementById('pokemonList')
 const loadMoreButton = document.getElementById('loadMoreButton')
+const pokemonInfo = document.getAnimations('pokemonInfo')
 
 const maxRecords = 151
 const limit = 10
@@ -56,6 +57,7 @@ pokemonList.addEventListener('click', (event) => {
         // Coleta os dados do Pokémon clicado
         const pokemonNumber = listItem.querySelector('.number').textContent.replace('#', '');
         const pokemonName = listItem.querySelector('.name').textContent;
+        const pokemonType = listItem.querySelector('.type').textContent;
         const pokemonPhoto = listItem.querySelector('.detail img').getAttribute('src');
 
         // Chama a função para obter os detalhes do Pokémon clicado
@@ -66,22 +68,26 @@ pokemonList.addEventListener('click', (event) => {
                 const pokemonStats = pokemonDetail.stats;
 
                 // Cria um HTML dinâmico para exibir informações adicionais sobre o Pokémon clicado
-                const popupHTML = `
-                    <h2>${pokemonName} #${pokemonNumber}</h2>
+                const pokemonInfo = `
+                <link rel="stylesheet" href="/assets/css/popup.css">
+                <link rel="stylesheet" href="/assets/css/global.css">
+                <div class="popup-container ${pokemonType}">
+                    <h2 class="name">#${pokemonNumber} ${pokemonName}</h2>
                     <img src="${pokemonPhoto}" alt="${pokemonName}">
-                    <h3></h3>
-                    <h3>Stats:</h3>
-                    <ul>
-                        ${pokemonStats.map(stat => `<li>${stat.name}: ${stat.base_stat}</li>`).join('')}  
+                    <h3 class="type ${pokemonType}">${pokemonType}</h3>
+                    <ul class="list">
+                        ${pokemonStats.map(stat => `<li>${stat.name}: ${stat.base_stat}</li>
+                        `).join('')}  
                     </ul>
+                </div>
                 `;
 
                 // Abre uma nova janela em sobreposição
-                const popupWindow = window.open('popup.html', '_blank', 'width=367,height=647');
+                const popupWindow = window.open('popup.html', '_blank', 'width=367,height=580');
 
                 if (popupWindow) {
                     // Passa o conteúdo HTML gerado dinamicamente para a janela pop-up
-                    popupWindow.document.write(popupHTML);
+                    popupWindow.document.write(pokemonInfo);
                 } else {
                     alert('Pop-up bloqueado! Por favor, habilite pop-ups para ver mais informações.');
                 }
